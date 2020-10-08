@@ -41,6 +41,7 @@ print(" s6: %s" % s6)
 q1b = [ [s1,s2,s3,s4] ] # they are all equivalent.
 #q1b = [ [s1], [s2], [s3], [s4] ] # they are all different
 #q1b = ??? # the right answer please!
+q1b = [ [s1], [s2, s3], [s4] ]
 
 # (c) Variable q1c should be a dictionary mapping variables to True or False.
 #     Use only what you need of P, Q, R, S, T. An example (almost certainly
@@ -51,6 +52,12 @@ q1c = {
     R: True,
     S: False,
     T: True
+}
+
+q1c = {
+    T: False,
+    Q: False,
+    S: False,
 }
 
 
@@ -95,6 +102,23 @@ s6nnf = [
     [(P & Q) | R, 'starting formula -- already in negation normal form']
 ]
 
+s5nnf = [
+    [(~(~T|Q)|(~T>>(S&~Q))), "starting formula"],
+    [(((~~T) & (~Q)) | (~T >> (S & ~Q))), "de Morgans"],
+    [((T & ~Q) | (~T >> (S & ~Q))), "double negation"],
+    [((T & ~Q) | ((~~T) | (S & ~Q))), "replace implications"],
+    [((T & ~Q) | (T | (S & ~Q))), "double negation -- already in negation normal form"]
+]
+
+s6nnf = [
+    [((Q>>T)>>((T&~Q)|S)), "starting formula"],
+    [((~Q | T) >> ((T & ~Q) | S)), "replace implications"],
+    [(~(~Q | T) | ((T & ~Q) | S)), "replace implications"],
+    [((~~Q & ~T) | ((T & ~Q) | S)), "de Morgans"],
+    [((Q & ~T) | ((T & ~Q) | S)), "double negation -- already in negation normal form"]
+]
+    
+    
 
 # (c) Copy s5 and s6 formulae into the first steps below, and show the steps to
 #     convert to CNF using distribution, de Morgan's, implication removal, etc.
@@ -111,6 +135,26 @@ s6cnf = [
     [(P | R) & (Q | R), 'distribution']
 ]
 
+s5cnf = [
+    [(~(~T|Q)|(~T>>(S&~Q))), "starting formula"],
+    [ ((~~T & ~Q) | (~T>>(S&~Q))), "de Morgans"],
+    [ ((~~T & ~Q) | (~~T | ( S & ~Q))), "replace implication"],
+    [ ((T & ~Q) | ( T | ( S & ~Q))), "double negation"],
+    [ ((T & ~Q) | (( T | ~Q) & ( T | S))), "distribution"],
+    [ (((T & ~Q) | ( T | ~Q)) & ( (T & ~Q) | ( T | S))), "distribution"],
+    [((T|~Q)&(T|S)),"distribution"]
+]
+
+s6cnf = [
+    [ ((Q>>T)>>((T&~Q)|S)), "starting formula"],
+    [ ((~Q | T) >> ((T & ~Q) | S)), "replace implication"],
+    [ ((~Q | T) >> ((T & S) | (S & ~Q))), "distibution"],
+    [ (~(~Q | T) | ((T & S) | (S & ~Q))), "replace implication"],
+    [ ((~~Q & ~T) | ((T & S) | (S & ~Q))), "de Morgans"],
+    [ ((Q & ~T) | ((T & S) | (S & ~Q))), "double negation"],
+    [ ((Q |((T & S) | (S & ~Q))) & (~T | ((T & S) | (S & ~Q)))), "distribution"],
+    [ (S|Q) & (S|~T|~Q), "distribution"]
+]
 
 # (d) Build the Tseitin encoding of both s5 and s6 using the semantic_interface
 #     library to create auxiliary variables as necessary. Examples for different
@@ -132,6 +176,21 @@ x1 = s6tseitin.tseitin(P & Q, 'x1')
 x2 = s6tseitin.tseitin(x1 | R, 'x2')
 s6tseitin.finalize(x2)
 
+s5tseitin = semantic_interface.Encoding()
+x1 = s5tseitin.tseitin(~T, "x1")
+x2 = s5tseitin.tseitin(x1 | Q, "x2")
+x3 = s5tseitin.tseitin(~x2, "x3")
+x4 = s5tseitin.tseitin(~Q, "x4")
+x5 = s5tseitin.tseitin(S & x4, "x5")
+x6 = s5tseitin.tseitin(x1 >> x5, "x6")
+x7 = s5tseitin.tseitin(x6 | x2, "x7")
+s5tseitin.finalize(x7)
 
-
+s6tseitin = semantic_interface.Encoding()
+x1 = s6tseitin.tseitin(Q >> T, "x1")
+x2 = s6tseitin.tseitin(~Q, "x2")
+x3 = s6tseitin.tseitin(x2 & T, "x3")
+x4 = s6tseitin.tseitin(x3 | S, "x4")
+x5 = s6tseitin.tseitin(x1 >> x4, "x5")
+s6tseitin.finalize(x5)
 print()
