@@ -141,7 +141,7 @@ s5cnf = [
     [ ((~~T & ~Q) | (~~T | ( S & ~Q))), "replace implication"],
     [ ((T & ~Q) | ( T | ( S & ~Q))), "double negation"],
     [ ((T & ~Q) | (( T | ~Q) & ( T | S))), "distribution"],
-    [ (((T & ~Q) | ( T | ~Q)) & ( (T & ~Q) | ( T | S))), "distribution"]
+    [ (((T & ~Q) | ( T | ~Q)) & ( (T & ~Q) | ( T | S))), "distribution"],
     [((T|~Q)&(T|S)),"distribution"]
 ]
 
@@ -152,7 +152,7 @@ s6cnf = [
     [ (~(~Q | T) | ((T & S) | (S & ~Q))), "replace implication"],
     [ ((~~Q & ~T) | ((T & S) | (S & ~Q))), "de Morgans"],
     [ ((Q & ~T) | ((T & S) | (S & ~Q))), "double negation"],
-    [ ((Q |((T & S) | (S & ~Q))) & (~T | ((T & S) | (S & ~Q)))), "distribution"]
+    [ ((Q |((T & S) | (S & ~Q))) & (~T | ((T & S) | (S & ~Q)))), "distribution"],
     [ (S|Q) & (S|~T|~Q), "distribution"]
 ]
 
